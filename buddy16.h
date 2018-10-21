@@ -8,7 +8,9 @@ typedef long           S32;
 typedef unsigned char  U8;
 typedef unsigned short U16;
 typedef unsigned long  U32;
+#ifndef NULL
 #define NULL           0
+#endif
 
 /**
  * the buddy buffer not only includes memory for allocation, but also an extra memory for 
@@ -23,15 +25,15 @@ typedef unsigned long  U32;
  */
 
 #define MANAGE_SIZE(MEMORY_SIZE, MIN_ALLOC_SIZE)  \
-	(((((MEMORY_SIZE)/(MIN_ALLOC_SIZE)) >> 2) + 4) < 8 ? 8 : 
-	((((MEMORY_SIZE)/(MIN_ALLOC_SIZE)) >> 2) + 4))
+    (((((MEMORY_SIZE)/(MIN_ALLOC_SIZE)) >> 2) + 4) < 8 ? 8 : \
+    ((((MEMORY_SIZE)/(MIN_ALLOC_SIZE)) >> 2) + 4))
 
 #define BUDDY_SIZE(MEMORY_SIZE, MIN_ALLOC_SIZE)  \
-	((MEMORY_SIZE) + MANAGE_SIZE(MEMORY_SIZE, MIN_ALLOC_SIZE))
+    ((MEMORY_SIZE) + MANAGE_SIZE(MEMORY_SIZE, MIN_ALLOC_SIZE))
 
 /**
  * Initialize the buddy buffer
- * @param buffer    	memory address of the buddy buffer
+ * @param buffer        memory address of the buddy buffer
  * @param buffer_size   the total size of the buddy buffer, include size for allocation
  *                      and size for management.
  * @param min_alloc_size  the minimal allocation size, if alloc_size in buddy_alloc() function 
@@ -42,7 +44,7 @@ int buddy_init(S8 *buffer, U16 buffer_size, U16 min_alloc_size);
 
 /** 
  * Alloc memory from the buddy buffer.
- * @param buffer   		the buddy buffer address
+ * @param buffer        the buddy buffer address
  * @param alloc_size    allocate size from buddy buffer.
  * @return   NULL - out of memory, others - address of the allocate memory.
  */
@@ -51,9 +53,14 @@ S8* buddy_alloc(S8 *buffer, U16 alloc_size);
 /**
  * Free the memory back to the buddy buffer.
  * @param buffer        the 
- * @param tofree  		the address of memory to free, which returned by buddy_alloc().
+ * @param tofree        the address of memory to free, which returned by buddy_alloc().
  * @return              0 - on succeeded, <0 on failed.
  */
-int buddy_free(S8 *buffer, S8* free);
+int buddy_free(S8 *buffer, S8* tofree);
+
+/**
+ * dump the buddy tree, for test only.
+ */
+void buddy_dump(S8 *buffer);
 
 #endif
