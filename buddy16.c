@@ -54,7 +54,7 @@ int buddy_init(S8 *buffer, U16 buffer_size, U16 min_alloc_size)
 /** 
  * @param buddy 		buddy pointer
  * @param alloc_size 	allocation size
- * @return 				the free buddy's offset in the tree bitmap. 
+ * @return 				the free buddy's bit offset in the tree bitmap. 
  */
 static U16 buddy_alloc_level(struct buddy *buddy, U16 alloc_size)
 {
@@ -69,7 +69,7 @@ static U16 buddy_alloc_level(struct buddy *buddy, U16 alloc_size)
 	/* find in this level if there is '01', '10', which means one of the buddy 
 	 * has been used, and the other one is free, we just allocate the free one 
 	 * and return it. if there is patten '00', there might be 2 sinarioes, one is 
-	 * that two buddy is free, or 2 buddy have been used, these depend on the 
+	 * that two buddies are free, or 2 buddies have been used, these depend on the 
 	 * upper level state. if all pattern are '11', this means all buddy in this 
 	 * level have been used, it's out of memory, return NULL.
 	 * ps: 0 - free, 1 - used.
@@ -110,8 +110,9 @@ static U16 buddy_alloc_level(struct buddy *buddy, U16 alloc_size)
 
 S8* buddy_alloc(S8 *buffer, U16 alloc_size)
 {		
-	U16 extend_size;
-	U16 buddy_offset, buddy_size;
+	U16 extend_size, buffer_offset;
+	U16 buddy_offset, buddy_size, fold_offset;
+	U16 word_index, bit_index;
 	struct buddy *buddy = (struct buddy *)buffer;
 	U16 manage_size = MANAGE_SIZE(buddy->mem_size, buddy->min_alloc_size);
 
@@ -124,16 +125,27 @@ S8* buddy_alloc(S8 *buffer, U16 alloc_size)
 	if (!buddy)
 		return NULL;
 
-	buddy_size = buddy->mem_size / FOLD_POWER2(buddy_offset);
-	while(buddy_size > alloc_size) {
-		
-	}
+	fold_pow2 = FOLD_POWER2(buddy_offset);
+	buddy_size = buddy->mem_size / fold_pow2;
+	buffer_offset = (buddy_offset - fold_pow2) * buddy_size;
+	do {
+		word_index = buddy_offset >> 4;
+		bit_index  = buddy_offset & 0xf;
+		buddy->tree[word_index] |= 1 << bit_index;
+		if (buddy_size == extend_size) 
+			break;
+		buddy_size >>= 1;
+		buddy_offset <<= 1;
+	} while (1);
 
-	
-	return NULL;
+	return (S8 *)(buffer + manage_size + buffer_offset);
 }
 
-int buddy_free(S8 *buffer)
+int buddy_free(S8 *buffer, S8* tofree)
 {
+	struct buddy *buddy = (struct buddy *)buffer;
+	U16 manage_size = MANAGE_SIZE(buddy->mem_size, buddy->min_alloc_size);
+	U16 buffer_offset = free - buffer - manage_size;
+
 
 }

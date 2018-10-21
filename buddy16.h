@@ -51,9 +51,9 @@ S8* buddy_alloc(S8 *buffer, U16 alloc_size);
 /**
  * Free the memory back to the buddy buffer.
  * @param buffer        the 
- * @param offset  		the offset of the allocate memory returned by buddy_alloc().
+ * @param tofree  		the address of memory to free, which returned by buddy_alloc().
  * @return              0 - on succeeded, <0 on failed.
  */
-int buddy_free(S8 *buffer, S8* offset);
+int buddy_free(S8 *buffer, S8* free);
 
 #endif
