@@ -180,7 +180,8 @@ int buddy_free(S8 *buffer, S8* tofree)
     U16 manage_size = MANAGE_SIZE(buddy->mem_size, buddy->min_alloc_size);
     U16 buffer_offset = tofree - buffer - manage_size;
     U16 buddy_offset;
-    U16 word_index, bit_index;
+    U16 word_index, bit_index, buddy_index;
+    U8  combining = 0;
 
     buddy_offset = buffer_offset / buddy->min_alloc_size;   
     
@@ -190,9 +191,13 @@ int buddy_free(S8 *buffer, S8* tofree)
         if (buddy->tree[word_index] & (1 << bit_index)) {
             buddy->tree[word_index] &= ~(1 << bit_index);
             /* TODO: combine the two free buddy */
-            return 0;
+            combining = 1;
+            buddy_index = bit_index ^ 0x1;
+            if (buddy->tree[word_index] & (1 << buddy_index)) {
+                return 0;
+            }
         }
-        if (buddy_offset & 1) 
+        if ((buddy_offset & 1) && !combining)
             break;
 
         buddy_offset >>= 1;
