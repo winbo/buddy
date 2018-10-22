@@ -8,8 +8,9 @@ typedef long           S32;
 typedef unsigned char  U8;
 typedef unsigned short U16;
 typedef unsigned long  U32;
+
 #ifndef NULL
-#define NULL           0
+#define NULL           ((void *)0)
 #endif
 
 /**
@@ -56,11 +57,16 @@ S8* buddy_alloc(S8 *buffer, U16 alloc_size);
  * @param tofree        the address of memory to free, which returned by buddy_alloc().
  * @return              0 - on succeeded, <0 on failed.
  */
-int buddy_free(S8 *buffer, S8* tofree);
+int buddy_free(S8 *buffer, S8 *tofree);
 
 /**
  * dump the buddy tree, for test only.
  */
 void buddy_dump(S8 *buffer);
+
+/**
+ * check if the whole memory is free.
+ */
+int buddy_is_empty(S8 *buffer);
 
 #endif
