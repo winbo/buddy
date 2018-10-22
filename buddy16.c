@@ -140,7 +140,6 @@ static U16 buddy_alloc_level(struct buddy *buddy, U16 alloc_size)
     U16 bitmap, pattern;
 
     do {
-        try_upper_level = 0;
         if (buddy->mem_size == alloc_size) {
             if (buddy->tree[0] & 0x2) 
                 return 0;
@@ -148,6 +147,7 @@ static U16 buddy_alloc_level(struct buddy *buddy, U16 alloc_size)
                 return 1;
         }
 
+        try_upper_level = 0;
         level_bit_offset = buddy->mem_size / alloc_size;
         level_bit_length = level_bit_offset;
 
