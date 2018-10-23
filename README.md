@@ -1,5 +1,5 @@
 # buddy
-This is a buddy memory management module designed specifically for MCU system. It manages less than 64K bytes of memory, and it costs very few memory for allocation management.
+This is a buddy memory management module designed specifically for MCU system. It can manages not more than 32K bytes of memory, and it costs very few memory for allocation management.
 
 ## Getting start
 Before using this module, you need to determine how much memory pool that your module needed, and the minimal block size allocated from pool, the size of memory pool and the size of minimal block should be 2 power value. for example, the memory pool is 2048 bytes, minimal block size is 32 bytes.

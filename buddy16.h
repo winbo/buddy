@@ -23,6 +23,8 @@ typedef unsigned long  U32;
  * ((512 / 16 ) >> 2) + 4 = 12 bytes. so the actual size of the buddy buffer should be 
  * BUDDY_SIZE(512, 16) = 512 + 12 = 524 bytes. 
  * the minimal management size is 8 bytes.
+ *
+ * The maximal MEMORY_SIZE should not more than 32*1024.
  */
 
 #define MANAGE_SIZE(MEMORY_SIZE, MIN_ALLOC_SIZE)  \

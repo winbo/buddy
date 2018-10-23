@@ -7,7 +7,7 @@ struct buddy {
 };
 
 
-#define TEST_DEBUG
+/*#define TEST_DEBUG*/
 #if defined(TEST_DEBUG)
 #include <stdio.h>
 
@@ -56,9 +56,7 @@ void buddy_dump(S8 *buffer)
 #define ASSERT(A)
 void buddy_dump(S8 *buffer) 
 { 
-    return 0; 
 }
-
 #endif
 
 
@@ -203,6 +201,9 @@ S8* buddy_alloc(S8 *buffer, U16 alloc_size)
         extend_size = buddy->min_alloc_size;
     else
         extend_size = upper_pow2(alloc_size);
+
+    if (alloc_size > buddy->mem_size) 
+        return NULL;
 
     buddy_offset = buddy_alloc_level(buddy, extend_size);
     if (!buddy_offset)
